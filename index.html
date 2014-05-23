@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>New Tab</title>
+
+    <style>
+    #background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        -webkit-animation: fadein 2s; /* Safari and Chrome */
+                animation: fadein 2s;
+    }
+    .header-container {
+        position: absolute;
+        background: rgb(250, 250, 250);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 150px;
+        box-shadow:  25px 25px 50px 25px #222222;
+        overflow: hidden;
+    }
+    .header {
+        margin: 0px 150px;
+        font-family: 'Open Sans' sans-serif;
+        font-size: 60px;
+        /*font-style: italic;*/
+        color: #777777;
+    }
+
+    .name {
+        text-decoration: underline;
+    }
+
+    @keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+
+    /* Safari and Chrome */
+    @-webkit-keyframes fadein {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+    </style>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans">
+
+</head>
+
+<body>
+    <div id="background"></div>
+    <div class="header-container">
+         
+        <div class="header" style="margin-top: 5px;">
+            <span id="translated_message">good morning</span><!--
+            --><span>, </span><!--
+            --><span class="name" id="t_name" contenteditable="true"></span>
+        </div>    
+        <div class="header" style="font-size: 30px;">
+            <span id="translated_message">good morning</span><!--
+            --><span>, </span><!--
+            --><span class="name" id="n_name"></span>
+        </div>
+    </div>
+
+</body>
+<script type="text/javascript">
+
+var bg = document.getElementById('background');
+bg.style.backgroundImage = "url(" + "1" + ".jpg)";
+
+var t_name = document.getElementById("t_name");
+var n_name = document.getElementById("n_name");
+
+var name = localStorage.getItem("name") || "";
+localStorage.setItem("name", null);
+console.log(name);
+
+if(name == "") {
+    t_name.innerHTML = "______";
+} else {
+    t_name.innerHTML = name;
+    n_name.innerHTML = t_name.innerHTML;
+    t_name.style.textDecoration = "none";
+    n_name.style.textDecoration = "none";
+}
+
+
+t_name.addEventListener("keyup", function(e) {
+    if (e.keyCode == 13) {
+        t_name.style.textDecoration = "none";
+        n_name.style.textDecoration = "none";
+        localStorage.setItem("name", t_name.innerHTML);
+    }
+
+    n_name.innerHTML = t_name.innerHTML;
+
+}, false);
+
+
+/*
+var bgstore = JSON.parse(localStorage.getItem("bgstore"));
+if(bgstore != null) {
+    bg.addEventListener("load", function() {
+        var imgCanvas = document.createElement("canvas");
+        var imgContext = imgCanvas.getContext("2d");
+
+        // Make sure canvas is as big as the picture
+        imgCanvas.width = bg.width;
+        imgCanvas.height = bg.height;
+
+        // Draw image into canvas element
+        imgContext.drawImage(bg, 0, 0, bg.width, bg.height);
+
+        // Save image as a data URL
+        var storebg = imgCanvas.toDataURL("image/png");
+
+        try {
+            localStorage.setItem("bgstore", JSON.strinify(storebg));
+        } catch(e) {
+            console.log("storage fail.");
+        }
+    }, false);    
+    
+    // set from link
+    
+} else {
+    // set from local storage
+    bg.style.backgroundImage = bgstore;
+    console.log(bgstore);
+}*/
+</script>
+</html>

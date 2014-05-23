@@ -1,0 +1,10 @@
+{
+	"manifest_version" : 2,
+	"name" : "New Tab Page",
+
+	"description" : "good morning, evening, etc. in a new language every day",
+
+	"version" : "0.1",
+
+	"Chrome_url_overrides" : { "newtab" : "index.html" }
+}
