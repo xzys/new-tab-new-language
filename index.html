@@ -11,12 +11,14 @@
         left: 0;
         right: 0;
         bottom: 0;
+        overflow: hidden;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
 
         -webkit-animation: fadein 2s; /* Safari and Chrome */
-                animation: fadein 2s;
+        animation: fadein 2s;
+
     }
     .header-container {
         position: absolute;
@@ -24,20 +26,46 @@
         bottom: 0;
         left: 0;
         right: 0;
-        height: 150px;
+        padding: 0px 100px;
         box-shadow:  25px 25px 50px 25px #222222;
+        
+        max-height: 110px;
         overflow: hidden;
-    }
-    .header {
-        margin: 0px 150px;
-        font-family: 'Open Sans' sans-serif;
-        font-size: 60px;
-        /*font-style: italic;*/
-        color: #777777;
+        white-space: nowrap;
+        transition-property: all;
+        transition-duration: 1s;
+        transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
     }
 
-    .name {
-        text-decoration: underline;
+    .header-container.closed {
+        max-height: 0px;
+    }
+
+    .division {
+        display: inline-block;
+        white-space: nowrap;
+        font-family: 'Open Sans' sans-serif;
+        font-size: 85px;
+        /*font-style: italic;*/
+        margin-top: 8px;
+        color: #777777;
+
+        -webkit-animation: fadein 1s; /* Safari and Chrome */
+        animation: fadein 1s;
+    }
+
+    .left {
+        float: left;
+    }
+    .right {
+        float: right;
+        text-align: right;
+    }
+    .main {
+        font-size: 40px;
+    }
+    .secondary {
+        font-size: 25px;
     }
 
     @keyframes fadein {
@@ -57,85 +85,182 @@
 
 <body>
     <div id="background"></div>
-    <div class="header-container">
-         
-        <div class="header" style="margin-top: 5px;">
-            <span id="translated_message">good morning</span><!--
-            --><span>, </span><!--
-            --><span class="name" id="t_name" contenteditable="true"></span>
+    <!-- <img id="elephant" src="about:blank" hidden="true"> -->
+    <div class="header-container closed" id="header">
+        <div class="division left" style="width: 280px; margin: 0px;">
+            <span id="time">...</span><!--
+            --><span id="ampm" class="secondary"></span>
+        </div>
+        <div class="division left">
+            <div class="main">
+                <span id="translated_message">good morning</span><!--
+                --><span>, </span><!--
+            --><span class="name" id="t_name" contenteditable="true" spellcheck="false">[type here]</span>
         </div>    
-        <div class="header" style="font-size: 30px;">
-            <span id="translated_message">good morning</span><!--
-            --><span>, </span><!--
-            --><span class="name" id="n_name"></span>
+        <div class="secondary">
+                <span id="translated_message">good morning</span><!--
+                --><span>, </span><!--
+            --><span class="name" id="n_name">whoever you are</span>
+        </div>
+    </div>
+    <div class="division right">
+        <div class="main">
+            <span id="temperature">...</span>
+        </div>
+        <div class="secondary">
+            <span id="weather_text">...</span>
         </div>
     </div>
 
-</body>
-<script type="text/javascript">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script type="text/javascript">
 
-var bg = document.getElementById('background');
-bg.style.backgroundImage = "url(" + "1" + ".jpg)";
-
-var t_name = document.getElementById("t_name");
-var n_name = document.getElementById("n_name");
-
-var name = localStorage.getItem("name") || "";
-localStorage.setItem("name", null);
-console.log(name);
-
-if(name == "") {
-    t_name.innerHTML = "______";
-} else {
-    t_name.innerHTML = name;
-    n_name.innerHTML = t_name.innerHTML;
-    t_name.style.textDecoration = "none";
-    n_name.style.textDecoration = "none";
-}
+    /* BACKGROUND */
+    var bg = document.getElementById('background');
+    var date = new Date();
+    var img_url = "https://googledrive.com/host/0B0sSFUeQGjaGeGVBSGFOTzh1bkE/" +
+    (date.getMonth() + 1).toString() + date.getDate().toString() + ".jpg";
+    bg.style.backgroundImage = "url(" + img_url + ")";
+    // bg.style.backgroundImage = "URL(1.jpg)";
 
 
-t_name.addEventListener("keyup", function(e) {
-    if (e.keyCode == 13) {
+
+    /* TIME */
+    var time = document.getElementById('time');
+    var ampm = document.getElementById('ampm');
+
+    window.setInterval(function(){
+        var hours = date.getHours() % 12;
+        var minutes = date.getMinutes();
+        if ((minutes + "").length == 1) minutes = "0" + minutes;
+
+        var std = hours + ':' + minutes;
+        std.replace('0:', '12:');
+
+        time.innerHTML = std;
+        ampm.innerHTML = date.getHours() > 12 ? 'PM' : 'AM';
+    }, 1000);
+
+
+    /* NAME */
+    var t_name = document.getElementById("t_name");
+    var n_name = document.getElementById("n_name");
+    var name = localStorage.getItem("name") || "";
+
+    t_name.addEventListener("focusin", function(e) {
+        t_name.style.textDecoration = "underline";
+        n_name.style.textDecoration = "underline";
+        if(t_name.innerHTML == "[type here]") {
+            t_name.innerHTML = "";
+        }
+    });
+    t_name.addEventListener("focusout", function(e) {
         t_name.style.textDecoration = "none";
         n_name.style.textDecoration = "none";
-        localStorage.setItem("name", t_name.innerHTML);
+    });
+    t_name.addEventListener("keypress", function(e) {
+        if (e.keyCode == 13) {
+            t_name.innerHTML = t_name.innerHTML.trim();
+            localStorage.setItem("name", t_name.innerHTML);
+        }
+        n_name.innerHTML = t_name.innerHTML;
+        return false;
+    }, false);
+
+    if(name == "") {
+        t_name.innerHTML == "[type here]";
+    } else {
+        t_name.innerHTML = name;
+        n_name.innerHTML = t_name.innerHTML;
+        t_name.style.textDecoration = "none";
+        n_name.style.textDecoration = "none";
     }
 
-    n_name.innerHTML = t_name.innerHTML;
-
-}, false);
-
-
-/*
-var bgstore = JSON.parse(localStorage.getItem("bgstore"));
-if(bgstore != null) {
-    bg.addEventListener("load", function() {
-        var imgCanvas = document.createElement("canvas");
-        var imgContext = imgCanvas.getContext("2d");
-
-        // Make sure canvas is as big as the picture
-        imgCanvas.width = bg.width;
-        imgCanvas.height = bg.height;
-
-        // Draw image into canvas element
-        imgContext.drawImage(bg, 0, 0, bg.width, bg.height);
-
-        // Save image as a data URL
-        var storebg = imgCanvas.toDataURL("image/png");
-
-        try {
-            localStorage.setItem("bgstore", JSON.strinify(storebg));
-        } catch(e) {
-            console.log("storage fail.");
-        }
-    }, false);    
     
-    // set from link
+
+    /* WEATHER */
+    var DATA_URL = "https://query.yahooapis.com/v1/public/yql?q=select%20item.forecast%20from%20weather.forecast%20where%20woeid%3D2476090&format=json&diagnostics=true&callback=process";
+    var temperature = document.getElementById("temperature");
+    var weather = document.getElementById("weather_text");
+
+    var scriptElement = document.createElement('script');
+    scriptElement.src = DATA_URL;
+    document.getElementsByTagName('head')[0].appendChild(scriptElement);
     
-} else {
-    // set from local storage
-    bg.style.backgroundImage = bgstore;
-    console.log(bgstore);
-}*/
-</script>
+    function process(data) {
+        var temp = data['query'].results.channel[0].item.forecast.high + "&deg / " +
+                   data['query'].results.channel[0].item.forecast.low + "&deg";
+        var text = data['query'].results.channel[0].item.forecast.text;
+        temperature.innerHTML = temp;
+        weather.innerHTML = text.toUpperCase();
+    };
+
+    window.onload = function() {
+        document.getElementById('header').classList.toggle('closed');
+    };
+
+
+    /*
+    // https://hacks.mozilla.org/2012/02/saving-images-and-files-in-localstorage/
+    // storage limit is somewhere around 550 kb - 559 kb
+    // localStorage with image
+    var storageFiles = JSON.parse(localStorage.getItem("storageFiles")) || {};
+    var elephant = document.getElementById("elephant");
+    var date = new Date();
+    var todaysDate = (date.getMonth() + 1).toString() + date.getDate().toString();
+    window.localStorage.clear();
+
+    console.log(storageFiles.date + "   " + todaysDate);
+
+    // Compare date and create localStorage if it's from a different day
+    if (typeof storageFiles.date === "undefined" || storageFiles.date < todaysDate) {
+        // Take action when the image has loaded
+        elephant.addEventListener("load", function () {
+            var imgCanvas = document.createElement("canvas"),
+                imgContext = imgCanvas.getContext("2d");
+     
+            // Make sure canvas is as big as the picture
+            imgCanvas.width = elephant.width;
+            imgCanvas.height = elephant.height;
+     
+            // Draw image into canvas element
+            imgContext.drawImage(elephant, 0, 0, elephant.width, elephant.height);
+     
+            // Save image as a data URL
+            storageFiles.elephant = imgCanvas.toDataURL("image/png");
+     
+            // Set date for localStorage
+            storageFiles.date = todaysDate;
+     
+            // Save as JSON in localStorage
+            try {
+                localStorage.setItem("storageFiles", JSON.stringify(storageFiles));
+                
+            } catch (e) {
+                console.log("Storage failed: " + e);
+            }
+        }, false);
+     
+        // Set initial image src    
+        elephant.src = "1.jpg";
+    } else {
+        console.log("Storage success.");
+        // Use image from localStorage
+        // var k = storageFiles.elephant;
+        // bg.style.backgroundImage = "url(" + k + ")";
+    }
+
+    window.onload = function() {
+        bg.style.backgroundImage = "url(" + storageFiles.elephant + ")";
+        console.log(storageFiles.elephant);
+    }
+
+    */
+
+
+
+
+    </script>
+
+</body>
 </html>
