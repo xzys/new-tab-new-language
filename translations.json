@@ -1,0 +1,25 @@
+{ "translations" : [
+	{"phrase" : "good morning", 
+	 "translations" : [
+		{"language" : "spanish", "say" : "¡buenos días"},
+
+
+	]},
+
+	{"phrase" : "good afternoon", 
+	 "translations" : [
+		{"language" : "spanish", "say" : "¡buenos tardes"},
+
+
+	]},
+
+	{"phrase" : "good evening", 
+	 "translations" : [
+		{"language" : "spanish", "say" : "¡buenos noches"},
+
+
+	]},
+	
+]
+	
+}
