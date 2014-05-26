@@ -155,6 +155,7 @@
     t_name.addEventListener("focusin", function(e) {
         t_name.style.textDecoration = "underline";
         n_name.style.textDecoration = "underline";
+        t_name.innerHTML = t_name.innerHTML.trim();
         if(t_name.innerHTML == "[type here]") {
             t_name.innerHTML = "";
         }
@@ -162,6 +163,7 @@
     t_name.addEventListener("focusout", function(e) {
         t_name.style.textDecoration = "none";
         n_name.style.textDecoration = "none";
+        t_name.innerHTML = t_name.innerHTML.trim();
     });
     t_name.addEventListener("keypress", function(e) {
         if (e.keyCode == 13) {
